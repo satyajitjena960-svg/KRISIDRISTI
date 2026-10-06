@@ -1,0 +1,175 @@
+<p>expert works!</p>
+<div class="expert-dashboard">
+  <!-- Top Banner / Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <div class="brand-badge">KrishiSathi AI</div>
+      <h2>Agricultural Expert Verification Portal</h2>
+      <p>Review flagged crop diagnoses, analyze disease markers, and issue treatment advisories.</p>
+    </div>
+    <div class="header-right">
+      <span class="user-pill"><span class="dot"></span> Verified Agri Expert</span>
+    </div>
+  </header>
+
+  <!-- Alerts -->
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="btn-text" (click)="fetchReviews()">Retry</button>
+    </div>
+  }
+
+  <!-- VIEW 1: QUEUE TABLE -->
+  @if (!selectedReview) {
+    <div class="content-card">
+      <div class="card-toolbar">
+        <div>
+          <h3>Pending Verification Queue</h3>
+          <span class="toolbar-subtitle">Showing {{ reviews.length }} cases requiring expert decision</span>
+        </div>
+        <button type="button" class="btn btn-secondary" (click)="fetchReviews()" [disabled]="loading">
+          {{ loading ? 'Refreshing...' : '↻ Refresh Queue' }}
+        </button>
+      </div>
+
+      @if (loading) {
+        <div class="state-container">
+          <div class="spinner"></div>
+          <p>Fetching cases...</p>
+        </div>
+      } @else if (reviews.length === 0) {
+        <div class="state-container empty-state">
+          <h4>No pending cases found</h4>
+          <p>All submitted crop diagnoses have been processed.</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="krishi-table">
+            <thead>
+              <tr>
+                <th>Crop Sample</th>
+                <th>Review ID</th>
+                <th>Diagnosis ID</th>
+                <th>Crop Name</th>
+                <th>AI Prediction</th>
+                <th>Confidence</th>
+                <th>Current Status</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of reviews; track item.reviewId || item.id) {
+                <tr>
+                  <td>
+                    <div class="thumb-wrapper">
+                      <img 
+                        [src]="item.imageUrl" 
+                        alt="Crop leaf" 
+                        class="crop-thumb" 
+                      />
+                    </div>
+                  </td>
+                  <td><code class="code-badge">{{ item.reviewId || item.id }}</code></td>
+                  <td>{{ item.diagnosisId || 'N/A' }}</td>
+                  <td><strong>{{ item.cropName || 'Unknown Crop' }}</strong></td>
+                  <td>
+                    <span class="disease-tag">{{ item.predictedDisease || 'Unspecified' }}</span>
+                  </td>
+                  <td>
+                    <div class="conf-bar-wrapper">
+                      <span class="conf-text">{{ formatPercent(item.confidenceScore) }}%</span>
+                      <div class="conf-track">
+                        <div class="conf-fill" [style.width.%]="(item.confidenceScore || 0) * 100"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="status-chip chip-pending">{{ item.status || 'PENDING' }}</span>
+                  </td>
+                  <td class="text-right">
+                    <button type="button" class="btn btn-primary" (click)="startReview(item)">
+                      Review Case →
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- VIEW 2: WORKBENCH (DETAIL & ADVISORY) -->
+  @if (selectedReview; as review) {
+    <div class="content-card workbench-card">
+      <div class="workbench-header">
+        <div>
+          <button type="button" class="btn-back" (click)="cancelReview()">← Back to Queue</button>
+          <h3>Case Workbench: <span class="text-green">{{ review.reviewId || review.id }}</span></h3>
+          <span class="toolbar-subtitle">Target: {{ review.cropName }} | Reference: {{ review.diagnosisId }}</span>
+        </div>
+        <span class="status-chip chip-pending">{{ review.status || 'PENDING' }}</span>
+      </div>
+
+      <div class="workbench-grid">
+        <!-- Visual Inspection Panel -->
+        <div class="panel image-inspection-panel">
+          <h4>Crop Leaf Visual Record</h4>
+          <div class="main-image-container">
+            <img [src]="review.imageUrl" alt="Leaf inspection" class="workbench-image" />
+          </div>
+          <div class="metadata-box">
+            <div class="meta-row">
+              <span class="meta-label">AI Suspected Disease:</span>
+              <span class="meta-val highlight">{{ review.predictedDisease || 'N/A' }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Model Confidence:</span>
+              <span class="meta-val">{{ formatPercent(review.confidenceScore) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expert Advisory Input Panel -->
+        <div class="panel form-panel">
+          <h4>Expert Verdict & Prescription</h4>
+
+          <div class="form-item">
+            <label for="reviewStatus">Verification Decision</label>
+            <select 
+              id="reviewStatus"
+              class="form-input select-input"
+              [(ngModel)]="selectedStatus"
+            >
+              <option value="COMPLETED">COMPLETED (Confirm Disease & Release Advisory)</option>
+              <option value="REJECTED">REJECTED (Blurry / Non-Plant / Invalid Sample)</option>
+              <option value="IN_REVIEW">IN_REVIEW (Requires Escalation / Multi-Expert Review)</option>
+            </select>
+          </div>
+
+          <div class="form-item">
+            <label for="advisoryNotes">Official Agricultural Advisory / Prescription</label>
+            <textarea 
+              id="advisoryNotes"
+              rows="7"
+              class="form-input textarea-input"
+              placeholder="Enter approved pesticide chemical compositions, dosage per acre, preventative sprays, or cultural field practices..."
+              [(ngModel)]="advisoryDescription"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="cancelReview()" [disabled]="submitting">
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" (click)="submitReview()" [disabled]="submitting">
+              {{ submitting ? 'Submitting Verdict...' : '✔ Save & Finalize Verdict' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
