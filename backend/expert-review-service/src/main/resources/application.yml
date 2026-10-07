@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8080
 
 spring:
   application:
@@ -16,12 +16,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  eureka:
-    client:
-      fetch-registry: true
-      register-with-eureka: true
-      service-url:
-        defaultZone: http://localhost:1234/eureka
 
-    instance:
-      ip-address: true
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false

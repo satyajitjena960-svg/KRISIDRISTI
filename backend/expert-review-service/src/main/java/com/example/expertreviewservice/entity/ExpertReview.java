@@ -1,9 +1,6 @@
 package com.example.expertreviewservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -21,4 +18,10 @@ public class ExpertReview {
     private String expertId;
     private String description;
     private String status;
+    private String cropName;
+    private String predictedDisease;
+    private Double confidenceScore;
+
+    @Column(length = 1000)
+    private String imageUrl;
 }
