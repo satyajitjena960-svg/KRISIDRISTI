@@ -1,4 +1,3 @@
-
 <div class="expert-dashboard">
   <!-- Top Banner / Header -->
   <header class="dashboard-header">
@@ -12,7 +11,7 @@
     </div>
   </header>
 
-  <!-- Alerts -->
+  <!-- Error or Alerts -->
   @if (errorMessage) {
     <div class="alert alert-error">
       <span>{{ errorMessage }}</span>
@@ -64,7 +63,7 @@
                   <td>
                     <div class="thumb-wrapper">
                       <img 
-                        [src]="item.imageUrl" 
+                        [src]="item.imageUrl || 'https://placehold.co/80x80/2d6a4f/ffffff?text=Crop'" 
                         alt="Crop leaf" 
                         class="crop-thumb" 
                       />
@@ -78,7 +77,7 @@
                   </td>
                   <td>
                     <div class="conf-bar-wrapper">
-                      <span class="conf-text">{{ formatPercent(item.confidenceScore) }}%</span>
+                    <span class="conf-text">{{ formatPercent(item.confidenceScore) }}%</span>
                       <div class="conf-track">
                         <div class="conf-fill" [style.width.%]="(item.confidenceScore || 0) * 100"></div>
                       </div>
@@ -127,7 +126,7 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Model Confidence:</span>
-              <span class="meta-val">{{ formatPercent(review.confidenceScore) }}%</span>
+           <span class="meta-val">{{ formatPercent(review.confidenceScore) }}%</span>
             </div>
           </div>
         </div>
@@ -141,7 +140,8 @@
             <select 
               id="reviewStatus"
               class="form-input select-input"
-              [(ngModel)]="selectedStatus"
+              [value]="selectedStatus"
+              (change)="selectedStatus = $any($event.target).value"
             >
               <option value="COMPLETED">COMPLETED (Confirm Disease & Release Advisory)</option>
               <option value="REJECTED">REJECTED (Blurry / Non-Plant / Invalid Sample)</option>
@@ -156,7 +156,8 @@
               rows="7"
               class="form-input textarea-input"
               placeholder="Enter approved pesticide chemical compositions, dosage per acre, preventative sprays, or cultural field practices..."
-              [(ngModel)]="advisoryDescription"
+              [value]="advisoryDescription"
+              (input)="advisoryDescription = $any($event.target).value"
             ></textarea>
           </div>
 

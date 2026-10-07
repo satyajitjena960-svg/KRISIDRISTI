@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
@@ -18,12 +18,13 @@ export interface ExpertReview {
 @Component({
   selector: 'app-expert',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DecimalPipe],
   templateUrl: './expert.html',
   styleUrl: './expert.css'
 })
 export class Expert implements OnInit {
   private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
   private readonly baseUrl = 'http://localhost:8080/api/expert/reviews';
 
   reviews: ExpertReview[] = [];
@@ -35,33 +36,36 @@ export class Expert implements OnInit {
   advisoryDescription: string = '';
   submitting: boolean = false;
 
+  formatPercent(score: number | undefined): number {
+    return Math.round((score || 0) * 100);
+  }
+
   ngOnInit(): void {
-    this.reviews = this.getDefaultMockReviews();
     this.fetchReviews();
   }
 
   fetchReviews(): void {
-    this.loading = false;
+    this.loading = true;
     this.errorMessage = '';
 
     const params = new HttpParams().set('status', 'PENDING');
 
     this.http.get<ExpertReview[]>(this.baseUrl, { params }).subscribe({
       next: (data) => {
-        if (data && data.length > 0) {
-          this.reviews = data;
-        }
+        this.reviews = Array.isArray(data) && data.length > 0 ? data : this.getDefaultMockReviews();
+        this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
-        // Keeps mock data active when backend is offline
+      error: (err) => {
+        console.error('API Error:', err);
+        this.reviews = this.getDefaultMockReviews();
+        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   getDefaultMockReviews(): ExpertReview[] {
-    const leafIcon =
-      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="%232d6a4f"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.75C6.2 7.5 4.25 9.9 3 13.5c1.5-1.5 3.5-2.5 5.5-2.5 3 0 5 2 5 2s-2-3-4.5-3.5c3.5-1 7-1.5 8-1.5z"/></svg>';
-
     return [
       {
         reviewId: 'REV-1001',
@@ -70,7 +74,7 @@ export class Expert implements OnInit {
         predictedDisease: 'Early Blight',
         confidenceScore: 0.54,
         status: 'PENDING',
-        imageUrl: leafIcon
+        imageUrl: 'https://images.unsplash.com/photo-1592417817098-8f3d6910985c?w=600'
       },
       {
         reviewId: 'REV-1002',
@@ -79,7 +83,7 @@ export class Expert implements OnInit {
         predictedDisease: 'Bacterial Leaf Blight',
         confidenceScore: 0.42,
         status: 'PENDING',
-        imageUrl: leafIcon
+        imageUrl: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600'
       },
       {
         reviewId: 'REV-1003',
@@ -88,13 +92,9 @@ export class Expert implements OnInit {
         predictedDisease: 'Late Blight',
         confidenceScore: 0.48,
         status: 'PENDING',
-        imageUrl: leafIcon
+        imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600'
       }
     ];
-  }
-
-  formatPercent(score: number | undefined): number {
-    return Math.round((score || 0) * 100);
   }
 
   startReview(item: ExpertReview): void {
@@ -124,7 +124,6 @@ export class Expert implements OnInit {
         this.finalizeSubmission(id);
       },
       error: () => {
-        // Fallback update for testing while backend is offline
         this.finalizeSubmission(id);
       }
     });
@@ -135,5 +134,6 @@ export class Expert implements OnInit {
     this.reviews = this.reviews.filter((r) => (r.reviewId || r.id) !== id);
     this.selectedReview = null;
     this.submitting = false;
+    this.cdr.detectChanges();
   }
 }

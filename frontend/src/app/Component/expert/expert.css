@@ -132,7 +132,7 @@
   background-color: #fbfdfb;
 }
 
-/* Thumbnail wrapper */
+/* Thumbnail Fix: strictly limits leaf image size */
 .thumb-wrapper {
   width: 52px;
   height: 52px;
@@ -140,9 +140,6 @@
   overflow: hidden;
   border: 1px solid #d8f3dc;
   background-color: #edf3ef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .crop-thumb {
@@ -171,7 +168,7 @@
   display: inline-block;
 }
 
-/* Confidence */
+/* Confidence Bar */
 .conf-bar-wrapper {
   display: flex;
   align-items: center;
@@ -201,20 +198,17 @@
 
 /* Status Chips */
 .status-chip {
-  display: inline-block;
   padding: 4px 10px;
   border-radius: 14px;
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  text-align: center;
 }
 
 .chip-pending {
   background: #fef3c7;
   color: #92400e;
-  border: 1px solid #fde68a;
 }
 
 /* Buttons */
@@ -251,7 +245,7 @@
   text-align: right;
 }
 
-/* Workbench View */
+/* WORKBENCH VIEW */
 .btn-back {
   background: none;
   border: none;
@@ -306,14 +300,11 @@
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .workbench-image {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -403,7 +394,5 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
