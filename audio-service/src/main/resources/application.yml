@@ -1,0 +1,23 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: audio-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/audio_db
+    username: postgres
+    password: Satya@2005
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+audio:
+  storage-path: ./audio-storage/
