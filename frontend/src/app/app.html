@@ -1,0 +1,1227 @@
+<div class="min-h-screen bg-slate-50 text-slate-900 pb-16">
+  <!-- Top Navigation Header -->
+  <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-50">
+    <div class="container py-3 flex flex-wrap items-center justify-between gap-4">
+      <!-- Branding -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center text-2xl shadow-inner">
+          🌱
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">{{ i18n.t('appName') }}</h1>
+          <p class="text-xs text-emerald-200">{{ i18n.t('appSubtitle') }}</p>
+        </div>
+      </div>
+
+      <!-- Center: Role Switcher & Persona -->
+      <div class="flex items-center bg-emerald-900/60 p-1 rounded-xl border border-emerald-700/50 text-xs font-semibold">
+        <button (click)="setRole('FARMER')"
+                [class.bg-emerald-600]="userRole() === 'FARMER'"
+                [class.text-white]="userRole() === 'FARMER'"
+                class="px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+          🌾 {{ i18n.t('farmerRole') }}
+        </button>
+        <button (click)="setRole('EXPERT')"
+                [class.bg-emerald-600]="userRole() === 'EXPERT'"
+                [class.text-white]="userRole() === 'EXPERT'"
+                class="px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+          🔬 {{ i18n.t('expertRole') }}
+        </button>
+        <button (click)="setRole('ADMIN')"
+                [class.bg-emerald-600]="userRole() === 'ADMIN'"
+                [class.text-white]="userRole() === 'ADMIN'"
+                class="px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+          🏛️ {{ i18n.t('adminRole') }}
+        </button>
+      </div>
+
+      <!-- Right: Language Switcher & Notifications -->
+      <div class="flex items-center gap-3">
+        <!-- Language Selector -->
+        <div class="flex bg-emerald-950 rounded-lg p-1 text-xs font-bold">
+          <button (click)="changeLanguage('en')"
+                  [class.bg-emerald-600]="i18n.currentLang() === 'en'"
+                  class="px-2.5 py-1 rounded transition-colors">
+            English
+          </button>
+          <button (click)="changeLanguage('hi')"
+                  [class.bg-emerald-600]="i18n.currentLang() === 'hi'"
+                  class="px-2.5 py-1 rounded transition-colors">
+            हिन्दी
+          </button>
+          <button (click)="changeLanguage('or')"
+                  [class.bg-emerald-600]="i18n.currentLang() === 'or'"
+                  class="px-2.5 py-1 rounded transition-colors">
+            ଓଡ଼ିଆ
+          </button>
+        </div>
+
+        <!-- Notification Bell -->
+        <button (click)="showNotifications.set(!showNotifications())"
+                class="relative p-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 transition-colors">
+          🔔
+          @if (unreadCount() > 0) {
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+              {{ unreadCount() }}
+            </span>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-navigation Tabs -->
+    <nav class="bg-emerald-900 border-t border-emerald-800 text-xs font-medium overflow-x-auto">
+      <div class="container flex gap-1 py-1">
+        <button (click)="setTab('diagnosis')"
+                [class.bg-emerald-700]="activeTab() === 'diagnosis'"
+                [class.text-white]="activeTab() === 'diagnosis'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          🔍 {{ i18n.t('tabDiagnosis') }}
+        </button>
+        <button (click)="setTab('risk')"
+                [class.bg-emerald-700]="activeTab() === 'risk'"
+                [class.text-white]="activeTab() === 'risk'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          ⛅ {{ i18n.t('tabRisk') }}
+        </button>
+        <button (click)="setTab('outbreak')"
+                [class.bg-emerald-700]="activeTab() === 'outbreak'"
+                [class.text-white]="activeTab() === 'outbreak'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          🗺️ {{ i18n.t('tabOutbreak') }}
+        </button>
+        <button (click)="setTab('profile')"
+                [class.bg-emerald-700]="activeTab() === 'profile'"
+                [class.text-white]="activeTab() === 'profile'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          🌾 {{ i18n.t('tabProfile') }}
+        </button>
+        <button (click)="setTab('timeline')"
+                [class.bg-emerald-700]="activeTab() === 'timeline'"
+                [class.text-white]="activeTab() === 'timeline'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          📈 {{ i18n.t('tabTimeline') }}
+        </button>
+        <button (click)="setTab('followup')"
+                [class.bg-emerald-700]="activeTab() === 'followup'"
+                [class.text-white]="activeTab() === 'followup'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          🔄 {{ i18n.t('tabFollowUp') }}
+        </button>
+        <button (click)="setTab('alerts')"
+                [class.bg-emerald-700]="activeTab() === 'alerts'"
+                [class.text-white]="activeTab() === 'alerts'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          🔔 {{ i18n.t('tabAlerts') }}
+        </button>
+        <button (click)="setTab('analytics')"
+                [class.bg-emerald-700]="activeTab() === 'analytics'"
+                [class.text-white]="activeTab() === 'analytics'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          📊 {{ i18n.t('tabAnalytics') }}
+        </button>
+        <button (click)="setTab('expert')"
+                [class.bg-emerald-700]="activeTab() === 'expert'"
+                [class.text-white]="activeTab() === 'expert'"
+                class="px-4 py-2 rounded-md hover:bg-emerald-800 text-emerald-100 transition whitespace-nowrap flex items-center gap-1.5">
+          👨‍⚕️ {{ i18n.t('tabExpert') }}
+          @if (escalatedCases().length > 0) {
+            <span class="bg-amber-500 text-slate-900 font-bold px-1.5 py-0.2 rounded-full text-[10px]">
+              {{ escalatedCases().length }}
+            </span>
+          }
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Notification Modal / Drawer -->
+  @if (showNotifications()) {
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-end">
+      <div class="w-full max-w-md bg-white h-full shadow-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+            <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+              🔔 {{ i18n.t('tabAlerts') }}
+            </h3>
+            <button (click)="showNotifications.set(false)" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+          </div>
+
+          <div class="mt-4 space-y-3 overflow-y-auto max-h-[75vh]">
+            @for (alert of notifications(); track alert.id) {
+              <div [class.bg-emerald-50]="!alert.isRead"
+                   [class.border-emerald-300]="!alert.isRead"
+                   class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+                <div class="flex items-start justify-between gap-2">
+                  <span class="badge"
+                        [class.badge-danger]="alert.priority === 'HIGH'"
+                        [class.badge-warning]="alert.priority === 'MEDIUM'">
+                    {{ alert.alertType }}
+                  </span>
+                  @if (!alert.isRead) {
+                    <button (click)="markRead(alert)" class="text-[11px] text-emerald-700 hover:underline">
+                      Mark read
+                    </button>
+                  }
+                </div>
+                <h4 class="font-bold text-slate-800 text-sm mt-2">{{ alert.title }}</h4>
+                <p class="text-xs text-slate-600 mt-1 leading-relaxed">{{ alert.message }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <button (click)="showNotifications.set(false)" class="btn btn-secondary w-full text-xs">
+          Close Alerts
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Main Content Container -->
+  <main class="container mt-6">
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 1: AI CROP DISEASE DIAGNOSIS & REMEDIATION -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'diagnosis') {
+      <div class="space-y-6">
+        <!-- Diagnostic Input & Upload Section -->
+        <div class="card bg-white border border-slate-200 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                🌿 {{ i18n.t('tabDiagnosis') }}
+              </h2>
+              <p class="text-sm text-slate-500">{{ i18n.t('appSubtitle') }}</p>
+            </div>
+            <!-- Quick Sample Selector -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500 font-semibold">Test Sample:</span>
+              <button (click)="selectSampleImage('tomato')" class="px-2.5 py-1 text-xs rounded bg-slate-100 hover:bg-emerald-100 font-medium text-slate-700">🍅 Tomato</button>
+              <button (click)="selectSampleImage('rice')" class="px-2.5 py-1 text-xs rounded bg-slate-100 hover:bg-emerald-100 font-medium text-slate-700">🌾 Rice</button>
+              <button (click)="selectSampleImage('potato')" class="px-2.5 py-1 text-xs rounded bg-slate-100 hover:bg-emerald-100 font-medium text-slate-700">🥔 Potato</button>
+              <button (click)="selectSampleImage('chili')" class="px-2.5 py-1 text-xs rounded bg-slate-100 hover:bg-emerald-100 font-medium text-slate-700">🌶️ Chili</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
+            <!-- Left: Image Drag-and-drop & Camera Upload -->
+            <div class="md:col-span-5 flex flex-col items-center justify-center p-6 border-2 border-dashed border-emerald-200 rounded-2xl bg-emerald-50/30 text-center relative overflow-hidden group">
+              <div class="w-full max-w-[280px] aspect-square rounded-xl overflow-hidden bg-slate-100 shadow-inner flex items-center justify-center relative">
+                @if (uploadedImage()) {
+                  <img [src]="uploadedImage()" alt="Crop Leaf" class="w-full h-full object-cover" />
+                } @else {
+                  <div class="text-slate-400">
+                    <span class="text-4xl">📸</span>
+                    <p class="text-xs mt-2 font-medium">No photo uploaded</p>
+                  </div>
+                }
+              </div>
+
+              <div class="mt-4">
+                <label class="btn btn-primary cursor-pointer text-xs">
+                  📷 {{ i18n.t('uploadPrompt') }}
+                  <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden" />
+                </label>
+                <p class="text-[11px] text-slate-400 mt-2">{{ i18n.t('dragDropHint') }}</p>
+              </div>
+            </div>
+
+            <!-- Right: Parameters, Voice Input, & Run Button -->
+            <div class="md:col-span-7 flex flex-col justify-between space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">{{ i18n.t('cropType') }}</label>
+                  <select [(ngModel)]="selectedCrop" (change)="onDistrictOrCropChange()" class="w-full p-2.5 rounded-lg border border-slate-300 text-sm bg-white font-medium focus:ring-2 focus:ring-emerald-500">
+                    <option value="Tomato">Tomato (ଟମାଟୋ)</option>
+                    <option value="Rice">Rice / Paddy (ଧାନ)</option>
+                    <option value="Potato">Potato (ଆଳୁ)</option>
+                    <option value="Chili">Chili (ଲଙ୍କା)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">{{ i18n.t('district') }}</label>
+                  <select [(ngModel)]="selectedDistrict" (change)="onDistrictOrCropChange()" class="w-full p-2.5 rounded-lg border border-slate-300 text-sm bg-white font-medium focus:ring-2 focus:ring-emerald-500">
+                    <option value="Cuttack">Cuttack (କଟକ)</option>
+                    <option value="Khordha">Khordha (ଖୋର୍ଦ୍ଧା)</option>
+                    <option value="Puri">Puri (ପୁରୀ)</option>
+                    <option value="Balasore">Balasore (ବାଲେଶ୍ୱର)</option>
+                    <option value="Sambalpur">Sambalpur (ସମ୍ବଲପୁର)</option>
+                    <option value="Ganjam">Ganjam (ଗଞ୍ଜାମ)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">{{ i18n.t('village') }}</label>
+                  <input type="text" [(ngModel)]="villageInput" class="w-full p-2.5 rounded-lg border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-emerald-500" placeholder="e.g. Barang" />
+                </div>
+              </div>
+
+              <!-- Voice & Text Symptom Description -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs font-semibold text-slate-600">Symptom Description & Voice Input</label>
+                  <!-- Microphone Button -->
+                  <button (click)="startVoiceInput()"
+                          [class.animate-pulse]="voice.isListening()"
+                          [class.bg-red-500]="voice.isListening()"
+                          [class.text-white]="voice.isListening()"
+                          class="px-2.5 py-1 text-xs rounded-full border border-emerald-400 bg-emerald-50 text-emerald-800 font-semibold flex items-center gap-1.5 hover:bg-emerald-100 transition">
+                    🎤 {{ voice.isListening() ? i18n.t('voiceListening') : i18n.t('voiceInputStart') }}
+                  </button>
+                </div>
+                <textarea rows="3" [(ngModel)]="symptomNotes"
+                          [placeholder]="i18n.t('notesPlaceholder')"
+                          class="w-full p-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+              </div>
+
+              <!-- Action Bar & Progress -->
+              <div>
+                @if (isAnalyzing()) {
+                  <div class="space-y-1 mb-3">
+                    <div class="flex justify-between text-xs text-emerald-800 font-medium">
+                      <span>{{ i18n.t('btnAnalyzing') }}</span>
+                      <span>{{ analysisProgress() }}%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div class="bg-emerald-600 h-full transition-all duration-300" [style.width.%]="analysisProgress()"></div>
+                    </div>
+                  </div>
+                }
+
+                <div class="flex flex-wrap items-center gap-3">
+                  <button (click)="runDiagnosis()" [disabled]="isAnalyzing()"
+                          class="btn btn-primary flex-1 py-3 text-sm shadow-md">
+                    ⚡ {{ isAnalyzing() ? i18n.t('btnAnalyzing') : i18n.t('btnAnalyze') }}
+                  </button>
+
+                  @if (currentDiagnosis()) {
+                    <button (click)="readDiagnosisAloud()"
+                            class="btn btn-secondary py-3 text-xs flex items-center gap-1.5">
+                      🔊 {{ voice.isSpeaking() ? 'Stop Audio' : i18n.t('readAloud') }}
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Results Card (Feature 1 Output) -->
+        @if (currentDiagnosis()) {
+          <div class="card bg-white border border-slate-200 shadow-md">
+            <!-- Header Result Bar -->
+            <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="badge"
+                        [class.badge-danger]="currentDiagnosis()!.severityLevel === 'SEVERE'"
+                        [class.badge-warning]="currentDiagnosis()!.severityLevel === 'MODERATE'"
+                        [class.badge-success]="currentDiagnosis()!.severityLevel === 'MILD'">
+                    {{ currentDiagnosis()!.severityLevel }} SEVERITY
+                  </span>
+                  <span class="text-xs text-slate-400 font-mono">ID #{{ currentDiagnosis()!.id }}</span>
+                </div>
+                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">
+                  {{ currentDiagnosis()!.diseaseName }}
+                </h3>
+                <p class="text-xs italic text-slate-500">{{ currentDiagnosis()!.scientificName }}</p>
+              </div>
+
+              <!-- Confidence & Severity Metrics -->
+              <div class="flex items-center gap-4">
+                <!-- Severity Gauge -->
+                <div class="text-center p-3 rounded-xl bg-slate-50 border border-slate-200 min-w-[110px]">
+                  <span class="text-[11px] font-semibold text-slate-500 uppercase">{{ i18n.t('severity') }}</span>
+                  <div class="text-2xl font-black"
+                       [class.text-red-600]="currentDiagnosis()!.severityPercentage >= 60"
+                       [class.text-amber-600]="currentDiagnosis()!.severityPercentage >= 30 && currentDiagnosis()!.severityPercentage < 60"
+                       [class.text-emerald-600]="currentDiagnosis()!.severityPercentage < 30">
+                    {{ currentDiagnosis()!.severityPercentage }}%
+                  </div>
+                </div>
+
+                <!-- Confidence Gauge -->
+                <div class="text-center p-3 rounded-xl bg-slate-50 border border-slate-200 min-w-[110px]">
+                  <span class="text-[11px] font-semibold text-slate-500 uppercase">{{ i18n.t('confidence') }}</span>
+                  <div class="text-2xl font-black text-emerald-700">
+                    {{ currentDiagnosis()!.confidenceScore }}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Escalation & Safety Notice -->
+            @if (currentDiagnosis()!.isEscalated) {
+              <div class="my-4 p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-2xl">🚨</span>
+                  <div>
+                    <h4 class="font-bold text-amber-900 text-xs">High Severity / Outbreak Escalation</h4>
+                    <p class="text-[11px] text-amber-800">{{ currentDiagnosis()!.expertNotes }}</p>
+                  </div>
+                </div>
+                <span class="badge badge-warning text-[10px]">Escalated to Expert</span>
+              </div>
+            }
+
+            <!-- Symptoms & Possible Causes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+              <!-- Symptoms -->
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-1.5">
+                  🔍 {{ i18n.t('symptoms') }}
+                </h4>
+                <ul class="space-y-2 text-xs text-slate-700">
+                  @for (sym of currentDiagnosis()!.symptoms; track sym) {
+                    <li class="flex items-start gap-2">
+                      <span class="text-emerald-600 font-bold">•</span>
+                      <span>{{ sym }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+
+              <!-- Possible Causes -->
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-1.5">
+                  🔬 {{ i18n.t('causes') }}
+                </h4>
+                <ul class="space-y-2 text-xs text-slate-700">
+                  @for (cause of currentDiagnosis()!.possibleCauses; track cause) {
+                    <li class="flex items-start gap-2">
+                      <span class="text-amber-600 font-bold">•</span>
+                      <span>{{ cause }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+
+            <!-- Step-by-Step Prioritized Remediation Plan -->
+            <div class="space-y-4">
+              <h4 class="font-bold text-sm text-slate-800 uppercase tracking-wider text-emerald-800">
+                🌱 Actionable Remediation & Treatment Guidance
+              </h4>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- 1. Biological Control -->
+                <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200">
+                  <h5 class="font-bold text-xs text-emerald-900 mb-2 flex items-center gap-1">
+                    🍃 {{ i18n.t('bioControl') }}
+                  </h5>
+                  <ul class="space-y-1.5 text-xs text-emerald-950">
+                    @for (bio of currentDiagnosis()!.biologicalControl; track bio) {
+                      <li class="flex items-start gap-1.5">
+                        <span class="text-emerald-600">✓</span>
+                        <span>{{ bio }}</span>
+                      </li>
+                    }
+                  </ul>
+                </div>
+
+                <!-- 2. Chemical Control -->
+                <div class="p-4 rounded-xl bg-rose-50/60 border border-rose-200">
+                  <h5 class="font-bold text-xs text-rose-900 mb-2 flex items-center gap-1">
+                    🧪 {{ i18n.t('chemControl') }}
+                  </h5>
+                  <ul class="space-y-1.5 text-xs text-rose-950">
+                    @for (chem of currentDiagnosis()!.chemicalControl; track chem) {
+                      <li class="flex items-start gap-1.5">
+                        <span class="text-rose-600">!</span>
+                        <span>{{ chem }}</span>
+                      </li>
+                    }
+                  </ul>
+                </div>
+
+                <!-- 3. Preventive Measures -->
+                <div class="p-4 rounded-xl bg-blue-50/60 border border-blue-200">
+                  <h5 class="font-bold text-xs text-blue-900 mb-2 flex items-center gap-1">
+                    🛡️ {{ i18n.t('prevention') }}
+                  </h5>
+                  <ul class="space-y-1.5 text-xs text-blue-950">
+                    @for (prev of currentDiagnosis()!.preventiveMeasures; track prev) {
+                      <li class="flex items-start gap-1.5">
+                        <span class="text-blue-600">→</span>
+                        <span>{{ prev }}</span>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Follow-up Scheduled Banner (Feature 6 Tie-in) -->
+            <div class="mt-6 p-4 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">⏰</span>
+                <div>
+                  <h5 class="font-bold text-indigo-900 text-xs">Follow-Up Required in 5 Days</h5>
+                  <p class="text-[11px] text-indigo-700">A reminder has been scheduled to upload a follow-up image to verify whether treatment is improving your crop.</p>
+                </div>
+              </div>
+              <button (click)="setTab('followup')" class="btn btn-primary text-xs bg-indigo-700 hover:bg-indigo-800">
+                Go to Follow-Up Tracking →
+              </button>
+            </div>
+
+            <!-- Legal / Advisory Safety Notice -->
+            <div class="mt-4 p-3 rounded-lg bg-slate-100 text-[11px] text-slate-600 flex items-start gap-2 border border-slate-200">
+              <span>⚠️</span>
+              <span>{{ currentDiagnosis()!.safetyDisclaimer }}</span>
+            </div>
+
+            <!-- Escalation Button -->
+            @if (!currentDiagnosis()!.isEscalated) {
+              <div class="mt-4 flex justify-end">
+                <button (click)="escalateCurrentCase()" class="btn btn-secondary text-xs">
+                  👨‍🌾 {{ i18n.t('btnEscalate') }}
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 2: WEATHER-BASED DISEASE RISK PREDICTION -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'risk') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                ⛅ {{ i18n.t('weatherRiskTitle') }}
+              </h2>
+              <p class="text-sm text-slate-500">Early warning system calculating atmospheric risk triggers</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <select [(ngModel)]="selectedDistrict" (change)="fetchWeatherRisk()" class="p-2 border rounded-lg text-xs bg-white font-medium">
+                <option value="Cuttack">Cuttack (କଟକ)</option>
+                <option value="Khordha">Khordha (ଖୋର୍ଦ୍ଧା)</option>
+                <option value="Puri">Puri (ପୁରୀ)</option>
+                <option value="Balasore">Balasore (ବାଲେଶ୍ୱର)</option>
+                <option value="Sambalpur">Sambalpur (ସମ୍ବଲପୁର)</option>
+              </select>
+
+              <select [(ngModel)]="selectedCrop" (change)="fetchWeatherRisk()" class="p-2 border rounded-lg text-xs bg-white font-medium">
+                <option value="Tomato">Tomato</option>
+                <option value="Rice">Rice</option>
+                <option value="Potato">Potato</option>
+                <option value="Chili">Chili</option>
+              </select>
+            </div>
+          </div>
+
+          @if (weatherRisk()) {
+            <!-- Atmospheric Metric Gauges -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 my-6">
+              <div class="p-4 rounded-xl bg-orange-50/70 border border-orange-200 text-center">
+                <span class="text-2xl">🌡️</span>
+                <span class="block text-xs text-orange-800 font-semibold mt-1">{{ i18n.t('temp') }}</span>
+                <span class="text-2xl font-black text-orange-950">{{ weatherRisk()!.temperatureC }}°C</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-cyan-50/70 border border-cyan-200 text-center">
+                <span class="text-2xl">💧</span>
+                <span class="block text-xs text-cyan-800 font-semibold mt-1">{{ i18n.t('humidity') }}</span>
+                <span class="text-2xl font-black text-cyan-950">{{ weatherRisk()!.humidityPercent }}%</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200 text-center">
+                <span class="text-2xl">🌧️</span>
+                <span class="block text-xs text-blue-800 font-semibold mt-1">{{ i18n.t('rainfall') }}</span>
+                <span class="text-2xl font-black text-blue-950">{{ weatherRisk()!.rainfallMm }} mm</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 text-center">
+                <span class="text-2xl">⛅</span>
+                <span class="block text-xs text-slate-600 font-semibold mt-1">{{ i18n.t('forecast') }}</span>
+                <span class="text-xs font-bold text-slate-800 block mt-1 leading-tight">{{ weatherRisk()!.weatherCondition }}</span>
+              </div>
+            </div>
+
+            <!-- Risk Status Banner matching prompt -->
+            <div class="p-6 rounded-2xl border transition-all"
+                 [class.bg-red-50]="weatherRisk()!.riskLevel === 'HIGH'"
+                 [class.border-red-300]="weatherRisk()!.riskLevel === 'HIGH'"
+                 [class.bg-amber-50]="weatherRisk()!.riskLevel === 'MODERATE'"
+                 [class.border-amber-300]="weatherRisk()!.riskLevel === 'MODERATE'"
+                 [class.bg-emerald-50]="weatherRisk()!.riskLevel === 'LOW'"
+                 [class.border-emerald-300]="weatherRisk()!.riskLevel === 'LOW'">
+              <div class="flex items-center justify-between gap-4 border-b pb-4 mb-4"
+                   [class.border-red-200]="weatherRisk()!.riskLevel === 'HIGH'"
+                   [class.border-amber-200]="weatherRisk()!.riskLevel === 'MODERATE'"
+                   [class.border-emerald-200]="weatherRisk()!.riskLevel === 'LOW'">
+                <div class="flex items-center gap-3">
+                  <span class="text-3xl">⚠️</span>
+                  <div>
+                    <span class="badge"
+                          [class.badge-danger]="weatherRisk()!.riskLevel === 'HIGH'"
+                          [class.badge-warning]="weatherRisk()!.riskLevel === 'MODERATE'"
+                          [class.badge-success]="weatherRisk()!.riskLevel === 'LOW'">
+                      {{ weatherRisk()!.riskLevel }} RISK LEVEL
+                    </span>
+                    <h3 class="text-lg font-bold text-slate-800 mt-1">
+                      Primary Vulnerability: {{ weatherRisk()!.primaryVulnerableDisease }}
+                    </h3>
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <span class="text-xs font-semibold text-slate-500">Atmospheric Risk Score</span>
+                  <div class="text-3xl font-black"
+                       [class.text-red-700]="weatherRisk()!.riskLevel === 'HIGH'"
+                       [class.text-amber-700]="weatherRisk()!.riskLevel === 'MODERATE'"
+                       [class.text-emerald-700]="weatherRisk()!.riskLevel === 'LOW'">
+                    {{ weatherRisk()!.riskScore }}/100
+                  </div>
+                </div>
+              </div>
+
+              <!-- High Risk Warning Quote from prompt -->
+              <div class="p-4 rounded-xl bg-white/80 border border-slate-200/60 shadow-inner">
+                <p class="font-bold text-sm text-slate-900 mb-2">
+                  {{ weatherRisk()!.riskWarning }}
+                </p>
+                <div class="mt-3 text-xs text-slate-700 whitespace-pre-line leading-relaxed">
+                  <strong class="text-emerald-800">{{ i18n.t('preventiveAdvice') }}:</strong>
+                  {{ weatherRisk()!.preventiveAdvice }}
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 3: LOCATION-BASED DISEASE MONITORING & OUTBREAK MAP -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'outbreak') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                🗺️ {{ i18n.t('locationMapTitle') }}
+              </h2>
+              <p class="text-sm text-slate-500">Aggregating farmer reports to detect regional outbreaks</p>
+            </div>
+            <span class="badge badge-info">{{ i18n.t('state') }}</span>
+          </div>
+
+          <!-- Outbreak Warning Box -->
+          <div class="my-6 p-4 rounded-xl bg-rose-50 border border-rose-300 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl animate-bounce">🚨</span>
+              <div>
+                <h4 class="font-extrabold text-rose-950 text-sm">Cuttack District Outbreak Active (37 Reported Cases)</h4>
+                <p class="text-xs text-rose-800">Multiple farmers in Barang and Salepur blocks have reported Tomato Early Blight within the past 48 hours.</p>
+              </div>
+            </div>
+            <span class="badge badge-danger">High Alert</span>
+          </div>
+
+          <!-- District Hierarchy from PDF -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- District Hierarchy Tree List -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 font-mono text-xs">
+              <div class="font-bold text-sm text-slate-800 border-b border-slate-200 pb-2 mb-3 flex items-center justify-between">
+                <span>Disease Monitoring: Odisha</span>
+                <span class="text-slate-400 font-normal">Live Case Aggregation</span>
+              </div>
+
+              <div class="space-y-3">
+                @for (ob of outbreaks(); track ob.id) {
+                  <div class="flex items-center justify-between p-2.5 rounded-lg bg-white border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-2">
+                      <span class="w-3 h-3 rounded-full"
+                            [class.bg-red-500]="ob.alertLevel === 'OUTBREAK_WARNING'"
+                            [class.bg-amber-500]="ob.alertLevel === 'WATCH'"
+                            [class.bg-emerald-500]="ob.alertLevel === 'NORMAL'"></span>
+                      <span class="font-bold text-slate-800">{{ ob.district }}</span>
+                      <span class="text-[11px] text-slate-500">({{ ob.primaryDisease }})</span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-sm text-slate-900">{{ ob.reportedCases }} cases</span>
+                      <span class="badge text-[10px]"
+                            [class.badge-danger]="ob.alertLevel === 'OUTBREAK_WARNING'"
+                            [class.badge-warning]="ob.alertLevel === 'WATCH'"
+                            [class.badge-success]="ob.alertLevel === 'NORMAL'">
+                        {{ ob.alertLevel }}
+                      </span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Visual District Map Simulation -->
+            <div class="p-5 rounded-2xl bg-emerald-950 text-white flex flex-col justify-between relative overflow-hidden">
+              <div>
+                <h4 class="font-bold text-sm text-emerald-300">Odisha Regional Heatmap Surveillance</h4>
+                <p class="text-xs text-emerald-400 mt-1">Geographic distribution of active pathogen reports</p>
+              </div>
+
+              <!-- SVG Geo Map representation -->
+              <div class="my-6 flex items-center justify-center">
+                <svg viewBox="0 0 300 200" class="w-full max-w-[280px] h-auto">
+                  <!-- District circles with pulsing markers -->
+                  <!-- Balasore -->
+                  <circle cx="210" cy="40" r="14" fill="#f59e0b" fill-opacity="0.6"/>
+                  <circle cx="210" cy="40" r="5" fill="#f59e0b"/>
+                  <text x="230" y="44" font-size="9" fill="#e2e8f0">Balasore (18)</text>
+
+                  <!-- Cuttack (Outbreak Hotspot) -->
+                  <circle cx="160" cy="90" r="24" fill="#ef4444" fill-opacity="0.5" class="animate-ping"/>
+                  <circle cx="160" cy="90" r="12" fill="#ef4444"/>
+                  <text x="178" y="94" font-size="10" font-weight="bold" fill="#fca5a5">Cuttack (37) ⚠️</text>
+
+                  <!-- Khordha -->
+                  <circle cx="140" cy="115" r="12" fill="#f59e0b" fill-opacity="0.6"/>
+                  <circle cx="140" cy="115" r="5" fill="#f59e0b"/>
+                  <text x="80" y="118" font-size="9" fill="#e2e8f0">Khordha (12)</text>
+
+                  <!-- Puri -->
+                  <circle cx="155" cy="140" r="10" fill="#10b981" fill-opacity="0.6"/>
+                  <circle cx="155" cy="140" r="4" fill="#10b981"/>
+                  <text x="170" y="144" font-size="9" fill="#a7f3d0">Puri (5)</text>
+
+                  <!-- Sambalpur -->
+                  <circle cx="70" cy="65" r="12" fill="#f59e0b" fill-opacity="0.6"/>
+                  <circle cx="70" cy="65" r="5" fill="#f59e0b"/>
+                  <text x="15" y="70" font-size="9" fill="#e2e8f0">Sambalpur (14)</text>
+
+                  <!-- Ganjam -->
+                  <circle cx="110" cy="160" r="10" fill="#10b981" fill-opacity="0.6"/>
+                  <circle cx="110" cy="160" r="4" fill="#10b981"/>
+                  <text x="125" y="164" font-size="9" fill="#a7f3d0">Ganjam (9)</text>
+                </svg>
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] text-emerald-300 border-t border-emerald-800/80 pt-3">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> >25 Cases (Outbreak)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 10-24 (Watch)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> &lt;10 (Normal)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 4: FARMER & FARM CROP PROFILE -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'profile') {
+      <div class="space-y-6">
+        <!-- Farmer Profile Header -->
+        <div class="card bg-white border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-700 text-white flex items-center justify-center text-3xl font-bold shadow-md">
+                👨‍🌾
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-slate-800">Ramesh Chandra Pradhan</h2>
+                <p class="text-xs text-slate-500">Barang Village, Cuttack District, Odisha | Contact: +91 98765 43210</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="badge badge-success text-[10px]">Verified Farmer</span>
+                  <span class="text-xs text-slate-400">Preferred Language: Odia / English</span>
+                </div>
+              </div>
+            </div>
+
+            <button (click)="showAddPlotModal.set(true)" class="btn btn-primary text-xs">
+              ➕ {{ i18n.t('addPlot') }}
+            </button>
+          </div>
+
+          <!-- Farm Plots List from PDF (Rice - 2 acres, Tomato - 1 acre, Potato - 1.5 acres) -->
+          <div class="my-6">
+            <h3 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2">
+              🌾 Registered Farm Plots (Total: 4.5 Acres)
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              @for (plot of farmPlots(); track plot.id) {
+                <div class="card bg-slate-50 hover:bg-emerald-50/40 border border-slate-200 transition-all">
+                  <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span class="font-bold text-sm text-slate-800">{{ plot.plotName }}</span>
+                    <span class="badge badge-info">{{ plot.acreage }} Acres</span>
+                  </div>
+
+                  <div class="space-y-2 text-xs text-slate-600 mt-3">
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Crop:</span>
+                      <strong class="text-slate-800">{{ plot.cropType }} ({{ plot.variety }})</strong>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Planting Date:</span>
+                      <span>{{ plot.plantingDate }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Soil Type:</span>
+                      <span>{{ plot.soilType }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Irrigation:</span>
+                      <span>{{ plot.irrigationType }}</span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-200 text-[11px]">
+                      <span class="text-slate-500 block font-semibold">Treatments Applied:</span>
+                      <span class="text-emerald-800 italic">{{ plot.treatmentsApplied || 'None logged' }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Plot Modal -->
+        @if (showAddPlotModal()) {
+          <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200">
+              <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-base text-slate-800">Add New Crop Plot</h3>
+                <button (click)="showAddPlotModal.set(false)" class="text-slate-400 hover:text-slate-600">✕</button>
+              </div>
+
+              <div class="space-y-3 mt-4 text-xs">
+                <div>
+                  <label class="font-semibold text-slate-600 block mb-1">Plot Name</label>
+                  <input type="text" [(ngModel)]="newPlot.plotName" placeholder="e.g. East River Plot" class="w-full p-2 border rounded-lg" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="font-semibold text-slate-600 block mb-1">Crop Type</label>
+                    <select [(ngModel)]="newPlot.cropType" class="w-full p-2 border rounded-lg bg-white">
+                      <option value="Tomato">Tomato</option>
+                      <option value="Rice">Rice</option>
+                      <option value="Potato">Potato</option>
+                      <option value="Chili">Chili</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="font-semibold text-slate-600 block mb-1">Acreage (Acres)</label>
+                    <input type="number" step="0.5" [(ngModel)]="newPlot.acreage" class="w-full p-2 border rounded-lg" />
+                  </div>
+                </div>
+                <div>
+                  <label class="font-semibold text-slate-600 block mb-1">Variety</label>
+                  <input type="text" [(ngModel)]="newPlot.variety" placeholder="e.g. Pusa Ruby" class="w-full p-2 border rounded-lg" />
+                </div>
+                <div>
+                  <label class="font-semibold text-slate-600 block mb-1">Treatments Applied</label>
+                  <input type="text" [(ngModel)]="newPlot.treatmentsApplied" placeholder="e.g. Neem oil foliar spray" class="w-full p-2 border rounded-lg" />
+                </div>
+              </div>
+
+              <div class="mt-6 flex justify-end gap-3">
+                <button (click)="showAddPlotModal.set(false)" class="btn btn-secondary text-xs">Cancel</button>
+                <button (click)="addNewPlot()" class="btn btn-primary text-xs">Save Plot</button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 5: CROP HEALTH HISTORY (CONTINUOUS MONITORING) -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'timeline') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                📈 {{ i18n.t('cropTimelineTitle') }}
+              </h2>
+              <p class="text-sm text-slate-500">{{ i18n.t('timelineSub') }}</p>
+            </div>
+            <span class="badge badge-success">Crop: Tomato (Central Plot)</span>
+          </div>
+
+          <!-- Timeline Stepper matching PDF example:
+               June 1 -> Healthy
+               June 8 -> Early symptoms
+               June 15 -> Moderate disease
+               June 22 -> Improving
+               June 29 -> Healthy -->
+          <div class="my-8 relative pl-6 border-l-2 border-emerald-500 space-y-8">
+            @for (item of healthTimeline(); track item.id) {
+              <div class="relative group">
+                <!-- Timeline Dot Indicator -->
+                <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-white shadow"
+                     [class.bg-emerald-500]="item.healthStage === 'Healthy'"
+                     [class.bg-amber-500]="item.healthStage === 'Early symptoms' || item.healthStage === 'Improving'"
+                     [class.bg-rose-500]="item.healthStage === 'Moderate disease'"></div>
+
+                <div class="card bg-slate-50 border border-slate-200 p-4 hover:shadow-md transition">
+                  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 pb-2">
+                    <div class="flex items-center gap-3">
+                      <span class="font-bold text-sm text-slate-800">{{ item.checkDate }}</span>
+                      <span class="badge"
+                            [class.badge-success]="item.healthStage === 'Healthy'"
+                            [class.badge-warning]="item.healthStage === 'Early symptoms' || item.healthStage === 'Improving'"
+                            [class.badge-danger]="item.healthStage === 'Moderate disease'">
+                        {{ item.healthStage }}
+                      </span>
+                    </div>
+                    <span class="text-xs font-bold text-slate-600">Severity: {{ item.severityPercent }}%</span>
+                  </div>
+
+                  <div class="mt-3 text-xs space-y-1">
+                    <p class="text-slate-700"><strong>Symptoms Observed:</strong> {{ item.symptomsObserved }}</p>
+                    <p class="text-emerald-800"><strong>Actions Taken:</strong> {{ item.actionsTaken }}</p>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 6: TREATMENT FOLLOW-UP & OUTCOME TRACKING -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'followup') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="border-b border-slate-100 pb-4">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              🔄 {{ i18n.t('followUpTitle') }}
+            </h2>
+            <p class="text-sm text-slate-500">{{ i18n.t('followUpSub') }}</p>
+          </div>
+
+          <!-- Side-by-Side Severity Comparison matching PDF:
+               Previous severity: 62%
+               Current severity: 38%
+               ↓ 24%
+               Crop condition: IMPROVING -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <!-- Left: Before vs After Comparison Card -->
+            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+              <div>
+                <h3 class="font-bold text-sm text-slate-800 mb-4 flex items-center gap-2">
+                  📊 Severity Comparison (Day 0 vs Day 5)
+                </h3>
+
+                <div class="grid grid-cols-2 gap-4 text-center my-4">
+                  <!-- Previous -->
+                  <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+                    <span class="text-xs text-rose-800 font-semibold uppercase block">{{ i18n.t('prevSeverity') }}</span>
+                    <span class="text-3xl font-black text-rose-900 mt-1 block">62%</span>
+                    <span class="text-[10px] text-rose-700 mt-1 block">Tomato Early Blight</span>
+                  </div>
+
+                  <!-- Current -->
+                  <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <span class="text-xs text-emerald-800 font-semibold uppercase block">{{ i18n.t('currentSeverity') }}</span>
+                    <span class="text-3xl font-black text-emerald-900 mt-1 block">
+                      {{ followUpResult() ? followUpResult()!.currentSeverity : '38' }}%
+                    </span>
+                    <span class="text-[10px] text-emerald-700 mt-1 block">After Treatment</span>
+                  </div>
+                </div>
+
+                <!-- Reduction Metric -->
+                <div class="p-4 rounded-xl bg-emerald-100/70 border border-emerald-300 text-center my-4">
+                  <span class="text-sm text-emerald-900 font-bold block">Severity Reduction:</span>
+                  <span class="text-4xl font-extrabold text-emerald-800 block my-1">
+                    ↓ {{ followUpResult() ? -followUpResult()!.severityChangePercent : 24 }}%
+                  </span>
+                  <span class="badge badge-success text-xs font-bold mt-1">
+                    {{ i18n.t('conditionImproving') }}
+                  </span>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-500 italic mt-2">
+                "Converts your application from a diagnosis system into a disease management system."
+              </p>
+            </div>
+
+            <!-- Right: Submit Follow-Up Check Form -->
+            <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+              <h3 class="font-bold text-sm text-slate-800">Upload Follow-Up Verification</h3>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ i18n.t('treatmentApplied') }}</label>
+                <input type="text" [(ngModel)]="followUpTreatment" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ i18n.t('observations') }}</label>
+                <textarea rows="3" [(ngModel)]="followUpObservation" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs"></textarea>
+              </div>
+
+              <div class="p-4 border-2 border-dashed border-slate-300 rounded-xl text-center bg-slate-50">
+                <span class="text-2xl">📸</span>
+                <p class="text-xs text-slate-600 font-medium mt-1">Upload leaf photo after 5 days</p>
+                <label class="btn btn-secondary text-xs mt-2 cursor-pointer">
+                  Browse Photo
+                  <input type="file" accept="image/*" class="hidden" />
+                </label>
+              </div>
+
+              <button (click)="submitFollowUp()" class="btn btn-primary w-full text-xs py-2.5">
+                {{ i18n.t('btnSubmitFollowUp') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 7: SMART ALERTS & NOTIFICATIONS -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'alerts') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                🔔 {{ i18n.t('tabAlerts') }}
+              </h2>
+              <p class="text-sm text-slate-500">Proactive reminders preventing crop damage and neglected follow-ups</p>
+            </div>
+            <span class="badge badge-warning">{{ unreadCount() }} Action Items</span>
+          </div>
+
+          <div class="my-6 space-y-4">
+            @for (alert of notifications(); track alert.id) {
+              <div class="p-4 rounded-xl border flex flex-wrap items-start justify-between gap-4 transition hover:shadow-sm"
+                   [class.bg-rose-50]="alert.priority === 'HIGH'"
+                   [class.border-rose-200]="alert.priority === 'HIGH'"
+                   [class.bg-amber-50]="alert.priority === 'MEDIUM'"
+                   [class.border-amber-200]="alert.priority === 'MEDIUM'">
+                <div class="flex items-start gap-3 max-w-2xl">
+                  <span class="text-2xl">
+                    @if (alert.alertType === 'DISEASE_RISK') { ⛅ }
+                    @else if (alert.alertType === 'FOLLOW_UP_REMINDER') { ⏰ }
+                    @else { 🚨 }
+                  </span>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="badge"
+                            [class.badge-danger]="alert.priority === 'HIGH'"
+                            [class.badge-warning]="alert.priority === 'MEDIUM'">
+                        {{ alert.alertType }}
+                      </span>
+                      <span class="text-xs text-slate-400 font-mono">{{ alert.createdAt | slice:0:10 }}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm mt-1">{{ alert.title }}</h4>
+                    <p class="text-xs text-slate-700 mt-1 leading-relaxed">{{ alert.message }}</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button (click)="markRead(alert)" class="btn btn-secondary text-xs">
+                    Dismiss
+                  </button>
+                  <button (click)="setTab('risk')" class="btn btn-primary text-xs">
+                    View Action →
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 8: ADMIN ANALYTICS DASHBOARD -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'analytics') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                📊 {{ i18n.t('analyticsTitle') }}
+              </h2>
+              <p class="text-sm text-slate-500">Centralized surveillance for agricultural officers and research directorates</p>
+            </div>
+            <span class="badge badge-success">Live Aggregation: Odisha</span>
+          </div>
+
+          <!-- KPI Cards matching PDF page 4:
+               Total Farmers: 2,540
+               Disease Cases: 1,284
+               Most Reported Disease: Leaf Blight
+               High-Risk Region: Cuttack
+               Cases This Week: ↑ 18%
+               Expert Reviews: 347 -->
+          <div class="grid grid-cols-2 md:grid-cols-6 gap-4 my-6">
+            <!-- Total Farmers -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs text-slate-500 font-semibold block">{{ i18n.t('totalFarmers') }}</span>
+              <span class="text-2xl font-black text-slate-900 mt-1 block">{{ analytics()?.totalFarmers }}</span>
+              <span class="text-[10px] text-emerald-600 font-semibold">↑ 6% this month</span>
+            </div>
+
+            <!-- Disease Cases -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs text-slate-500 font-semibold block">{{ i18n.t('totalCases') }}</span>
+              <span class="text-2xl font-black text-slate-900 mt-1 block">{{ analytics()?.totalDiseaseCases }}</span>
+              <span class="text-[10px] text-slate-400">Validated cases</span>
+            </div>
+
+            <!-- Most Reported Disease -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs text-slate-500 font-semibold block">{{ i18n.t('mostReported') }}</span>
+              <span class="text-sm font-extrabold text-rose-700 mt-1 block leading-snug">{{ analytics()?.mostReportedDisease }}</span>
+              <span class="text-[10px] text-rose-600 font-semibold">37.8% of total</span>
+            </div>
+
+            <!-- High-Risk Region -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs text-slate-500 font-semibold block">{{ i18n.t('highRiskZone') }}</span>
+              <span class="text-2xl font-black text-rose-800 mt-1 block">{{ analytics()?.highRiskRegion }}</span>
+              <span class="text-[10px] text-rose-600 font-semibold">Outbreak watch</span>
+            </div>
+
+            <!-- Cases This Week -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs text-slate-500 font-semibold block">{{ i18n.t('weeklyTrend') }}</span>
+              <span class="text-2xl font-black text-amber-600 mt-1 block">↑ {{ analytics()?.casesThisWeekGrowthPercent }}%</span>
+              <span class="text-[10px] text-amber-700 font-semibold">Weather-correlated</span>
+            </div>
+
+            <!-- Expert Reviews -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs text-slate-500 font-semibold block">{{ i18n.t('expertReviews') }}</span>
+              <span class="text-2xl font-black text-emerald-800 mt-1 block">{{ analytics()?.expertReviewsCompleted }}</span>
+              <span class="text-[10px] text-emerald-600 font-semibold">78.5% recovery</span>
+            </div>
+          </div>
+
+          <!-- Charts Section -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <!-- Disease Frequency Breakdown -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+              <h3 class="font-bold text-sm text-slate-800 mb-4">Disease Frequency Distribution</h3>
+              <div class="space-y-3">
+                @for (df of analytics()?.diseaseFrequency; track df.name) {
+                  <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                      <span class="text-slate-700">{{ df.name }}</span>
+                      <span class="text-slate-900">{{ df.count }} cases ({{ df.percentage }}%)</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div class="bg-emerald-600 h-full" [style.width.%]="df.percentage"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Crop-Wise Disease Incidences -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+              <h3 class="font-bold text-sm text-slate-800 mb-4">Crop-Wise Affected Acreage</h3>
+              <div class="space-y-3">
+                @for (cw of analytics()?.cropWiseCases; track cw.crop) {
+                  <div class="p-2.5 rounded-lg bg-white border border-slate-200 flex justify-between items-center text-xs">
+                    <div>
+                      <span class="font-bold text-slate-800 block">{{ cw.crop }}</span>
+                      <span class="text-slate-500">{{ cw.cases }} diagnosed cases</span>
+                    </div>
+                    <span class="badge badge-info">{{ cw.acresAffected }} Acres Affected</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================================= -->
+    <!-- FEATURE 10: EXPERT CONSULTATION & ESCALATION PORTAL -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'expert') {
+      <div class="space-y-6">
+        <div class="card bg-white border border-slate-200">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                🔬 {{ i18n.t('expertReviewTitle') }}
+              </h2>
+              <p class="text-sm text-slate-500">Extension agronomist verification for severe or uncertain diagnoses</p>
+            </div>
+            <span class="badge badge-warning">{{ escalatedCases().length }} Pending Cases</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 my-6">
+            <!-- Escalated Queue List -->
+            <div class="md:col-span-5 space-y-3">
+              <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">Escalated Queue</h3>
+              @for (c of escalatedCases(); track c.id) {
+                <div (click)="activeEscalated.set(c)"
+                     [class.border-emerald-500]="activeEscalated()?.id === c.id"
+                     [class.bg-emerald-50/40]="activeEscalated()?.id === c.id"
+                     class="p-4 rounded-xl border border-slate-200 bg-white cursor-pointer hover:shadow-md transition">
+                  <div class="flex justify-between items-start">
+                    <span class="badge badge-danger text-[10px]">Severity {{ c.severityPercentage }}%</span>
+                    <span class="text-xs font-mono text-slate-400">#{{ c.id }}</span>
+                  </div>
+                  <h4 class="font-bold text-slate-800 text-sm mt-2">{{ c.cropType }} - {{ c.diseaseName }}</h4>
+                  <p class="text-xs text-slate-500 mt-1">{{ c.district }} District</p>
+                </div>
+              }
+            </div>
+
+            <!-- Active Case Details & Certified Prescription Form -->
+            <div class="md:col-span-7">
+              @if (activeEscalated()) {
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                  <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+                    <div>
+                      <h4 class="font-extrabold text-base text-slate-900">{{ activeEscalated()!.diseaseName }}</h4>
+                      <p class="text-xs text-slate-500">Crop: {{ activeEscalated()!.cropType }} | Location: {{ activeEscalated()!.district }}</p>
+                    </div>
+                    <span class="badge badge-warning">Awaiting Official Stamp</span>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Agronomist Diagnosis & Clinical Notes</label>
+                    <textarea rows="3" [(ngModel)]="expertNotes" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs bg-white"></textarea>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Certified Biological Remediation</label>
+                    <input type="text" [(ngModel)]="expertPrescribedBio" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs bg-white" />
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Prescribed Chemical Treatment & Dosage</label>
+                    <input type="text" [(ngModel)]="expertPrescribedChem" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs bg-white" />
+                  </div>
+
+                  <button (click)="submitAgronomistReview()" class="btn btn-primary w-full text-xs py-2.5">
+                    ✅ {{ i18n.t('prescribeAction') }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </main>
+</div>
