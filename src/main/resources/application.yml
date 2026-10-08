@@ -1,0 +1,17 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    username: postgres
+    password: Pravat@1234
+    url: jdbc:postgresql://localhost:5432/diagnosisdb
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
