@@ -1,0 +1,5 @@
+com\krishisathi\user\UserServiceApplication.class
+com\krishisathi\user\model\FarmerProfile.class
+com\krishisathi\user\repository\FarmerProfileRepository.class
+com\krishisathi\user\controller\FarmerProfileController.class
+com\krishisathi\user\service\FarmerProfileService.class
