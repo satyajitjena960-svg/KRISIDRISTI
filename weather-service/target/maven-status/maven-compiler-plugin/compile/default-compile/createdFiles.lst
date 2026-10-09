@@ -1,0 +1,6 @@
+com\krishisathi\weather\repository\WeatherQueryLogRepository.class
+com\krishisathi\weather\WeatherServiceApplication.class
+com\krishisathi\weather\controller\WeatherController.class
+com\krishisathi\weather\dto\WeatherAdvisoryDto.class
+com\krishisathi\weather\model\WeatherQueryLog.class
+com\krishisathi\weather\service\WeatherService.class
