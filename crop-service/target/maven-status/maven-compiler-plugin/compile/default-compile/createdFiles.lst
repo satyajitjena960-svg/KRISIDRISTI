@@ -1,0 +1,14 @@
+com\krishisathi\crop\dto\CropGuidanceDto$FertilizerRecommendation.class
+com\krishisathi\crop\repository\FarmerCropRepository.class
+com\krishisathi\crop\model\CropDiseaseDiagnosis.class
+com\krishisathi\crop\service\DiseaseDetectionService.class
+com\krishisathi\crop\service\CropGuidanceService.class
+com\krishisathi\crop\service\DiseaseDetectionService$ImageAnalysisMetrics.class
+com\krishisathi\crop\CropServiceApplication.class
+com\krishisathi\crop\dto\DiseaseDiagnosisRequestDto.class
+com\krishisathi\crop\dto\CropGuidanceDto.class
+com\krishisathi\crop\repository\CropDiseaseDiagnosisRepository.class
+com\krishisathi\crop\model\FarmerCrop.class
+com\krishisathi\crop\dto\DiseaseDiagnosisResultDto.class
+com\krishisathi\crop\dto\CropGuidanceDto$DailyTask.class
+com\krishisathi\crop\controller\CropController.class

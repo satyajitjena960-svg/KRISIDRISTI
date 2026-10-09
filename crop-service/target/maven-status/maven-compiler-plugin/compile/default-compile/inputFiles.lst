@@ -1,0 +1,11 @@
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\controller\CropController.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\CropServiceApplication.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\dto\CropGuidanceDto.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\dto\DiseaseDiagnosisRequestDto.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\dto\DiseaseDiagnosisResultDto.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\model\CropDiseaseDiagnosis.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\model\FarmerCrop.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\repository\CropDiseaseDiagnosisRepository.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\repository\FarmerCropRepository.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\service\CropGuidanceService.java
+D:\PROFESSIONAL\Download\gan\crop-service\src\main\java\com\krishisathi\crop\service\DiseaseDetectionService.java
